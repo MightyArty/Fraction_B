@@ -26,7 +26,6 @@ namespace ariel
         int setDenominator(int bottom);
 
         // increment/decrement operators
-        Fraction operator-() const;
         Fraction operator++();
         Fraction operator++(int);
         Fraction operator--();
@@ -73,7 +72,7 @@ namespace ariel
 
         // I/O operators
         friend std::ostream &operator<<(std::ostream &out, const Fraction &other);
-        friend std::istream &operator>>(std::istream &in, const Fraction &other);
+        friend std::istream &operator>>(std::istream &in, Fraction &other);
     };
 }
 
