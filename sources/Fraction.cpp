@@ -8,7 +8,7 @@ using namespace std;
 using namespace ariel;
 
 #define EPSILON 0.00001
-#define GREAT 1000000
+#define GREAT 1000
 
 namespace ariel
 {
@@ -26,13 +26,10 @@ namespace ariel
 
     Fraction::Fraction(float number)
     {
-        int den = 1;
-        while (abs(number * den - round(number * den)) > EPSILON)
-        {
-            den++;
-        }
-        setNumerator(round(number * den));
-        setDenominator(den);
+        int temp = number * GREAT;
+        int common = __gcd(temp, GREAT);
+        setNumerator(temp / common);
+        setDenominator(GREAT / common);
     }
 
     Fraction::Fraction()
@@ -139,6 +136,10 @@ namespace ariel
 
     Fraction operator/(float number, const Fraction &other)
     {
+        if (other.getNumerator() == 0)
+        {
+            throw invalid_argument("Divison by zero!");
+        }
         float result = number / (static_cast<float>(other.getNumerator()) / other.getDenominator());
         return Fraction(result);
     }
@@ -163,6 +164,10 @@ namespace ariel
 
     Fraction operator/(const Fraction &other, float number)
     {
+        if (number == 0)
+        {
+            throw invalid_argument("Divison by zero!");
+        }
         float result = (static_cast<float>(other.getNumerator()) / other.getDenominator()) / number;
         return Fraction(result);
     }
@@ -249,13 +254,14 @@ namespace ariel
         int first, second;
         char seperator;
         in >> first >> seperator >> second;
-        if (in && seperator == '/')
+        if (!in || seperator != '/' || second == 0)
         {
-            other = Fraction(first, second);
+            in.setstate(std::ios_base::failbit);
+            return in;
         }
         else
         {
-            in.setstate(std::ios_base::failbit);
+            other = Fraction(first, second);
         }
         return in;
     }
