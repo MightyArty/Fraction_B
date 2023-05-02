@@ -71,8 +71,8 @@ namespace ariel
         friend bool operator==(const Fraction &my_frac, const Fraction &other);
 
         // I/O operators
-        friend std::ostream &operator<<(std::ostream &out, const Fraction &other);
-        friend std::istream &operator>>(std::istream &in, Fraction &other);
+        friend std::ostream &operator<<(std::ostream &output, const Fraction &other);
+        friend std::istream &operator>>(std::istream &input, Fraction &other);
 
         // overflow check function
         bool checkOverflow(int, int, int) const;
@@ -80,6 +80,8 @@ namespace ariel
         int lcm(int, int) const;
 
         void simplify();
+
+        int roundFraction(double value, int precision);
     };
 }
 
