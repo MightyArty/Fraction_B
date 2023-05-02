@@ -73,6 +73,13 @@ namespace ariel
         // I/O operators
         friend std::ostream &operator<<(std::ostream &out, const Fraction &other);
         friend std::istream &operator>>(std::istream &in, Fraction &other);
+
+        // overflow check function
+        bool checkOverflow(int, int, int) const;
+
+        int lcm(int, int) const;
+
+        void simplify();
     };
 }
 
