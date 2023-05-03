@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include <climits>
 
 using namespace std;
 using namespace ariel;
@@ -38,7 +39,7 @@ namespace ariel
         setNumerator(new_top);
         if (new_bottom == 0)
         {
-            throw invalid_argument("Divide by zero!");
+            throw runtime_error("Divide by zero!");
         }
         setDenominator(new_bottom);
     }
@@ -69,7 +70,7 @@ namespace ariel
     {
         if (bottom == 0)
         {
-            throw invalid_argument("Divison by zero!");
+            throw runtime_error("Divison by zero!");
         }
         this->bottom = bottom;
         return this->bottom;
@@ -103,68 +104,91 @@ namespace ariel
 
     Fraction Fraction::operator+(const Fraction &other) const
     {
-        int a = getNumerator();
-        int b = getDenominator();
-        int c = other.getNumerator();
-        int d = other.getDenominator();
-        if (checkOverflow(a, d, a * d) || checkOverflow(c, b, c * b))
+        float first = float(getNumerator()) / (getDenominator());
+        float second = float(other.getNumerator()) / (other.getDenominator());
+        float result = first + second;
+        // check overflow for the Fractions
+        if (result < static_cast<float>(INT_MIN) || result > static_cast<float>(INT_MAX) ||
+            first < static_cast<float>(INT_MIN) || first > static_cast<float>(INT_MAX) ||
+            second < static_cast<float>(INT_MIN) || second > static_cast<float>(INT_MAX))
         {
             throw overflow_error("Overflow in '+' operator");
         }
-
         int new_top = (getNumerator() * other.getDenominator()) + (other.getNumerator() * getDenominator());
         int new_bot = getDenominator() * other.getDenominator();
+        // check overflow for the result
+        if (new_top > numeric_limits<int>::max() || new_top < numeric_limits<int>::min() ||
+            new_bot > numeric_limits<int>::max() || new_bot < numeric_limits<int>::min())
+        {
+            throw overflow_error("Overflow in '+' operator");
+        }
         int gcd = __gcd(new_top, new_bot);
-        Fraction result(new_top / gcd, new_bot / gcd);
-        return result;
+        Fraction temp(new_top / gcd, new_bot / gcd);
+        return temp;
     }
 
     Fraction Fraction::operator-(const Fraction &other) const
     {
-        int mul1 = getNumerator() * other.getDenominator();
-        int mul2 = getDenominator() * other.getNumerator();
-        int new_top = mul1 - mul2;
-        int new_bot = getDenominator() * other.getDenominator();
-        // check if overflow exist
-        if (mul1 > 0 && mul2 < 0 && (max(mul1, mul2) >= new_top))
+        float first = float(getNumerator()) / (getDenominator());
+        float second = float(other.getNumerator()) / (other.getDenominator());
+        float result = first - second;
+        // check overflow for the Fractions
+        if (result < static_cast<float>(INT_MIN) || result > static_cast<float>(INT_MAX) ||
+            first < static_cast<float>(INT_MIN) || first > static_cast<float>(INT_MAX) ||
+            second < static_cast<float>(INT_MIN) || second > static_cast<float>(INT_MAX))
         {
             throw overflow_error("Overflow in '-' operator");
         }
-        Fraction result(new_top, new_bot);
-        result.simplify();
-        return result;
+        int new_top = (getNumerator() * other.getDenominator()) - (other.getNumerator() * getDenominator());
+        int new_bot = getDenominator() * other.getDenominator();
+        // check overflow for the result
+        if (new_top > numeric_limits<int>::max() || new_top < numeric_limits<int>::min() ||
+            new_bot > numeric_limits<int>::max() || new_bot < numeric_limits<int>::min())
+        {
+            throw overflow_error("Overflow in '+' operator");
+        }
+        int gcd = __gcd(new_top, new_bot);
+        Fraction temp(new_top / gcd, new_bot / gcd);
+        return temp;
 
-        // Fraction temp(other);
-        // int new_top = (getNumerator() * other.getDenominator()) - (other.getNumerator() * getDenominator());
-        // int new_bottom = getDenominator() * other.getDenominator();
-        // return Fraction(new_top, new_bottom);
+        // int mul1 = getNumerator() * other.getDenominator();
+        // int mul2 = getDenominator() * other.getNumerator();
+        // int new_top = mul1 - mul2;
+        // int new_bot = getDenominator() * other.getDenominator();
+        // // check if overflow exist
+        // if (mul1 > 0 && mul2 < 0 && (max(mul1, mul2) >= new_top))
+        // {
+        //     throw overflow_error("Overflow in '-' operator");
+        // }
+        // Fraction result(new_top, new_bot);
+        // result.simplify();
+        // return result;
     }
 
     Fraction Fraction::operator/(const Fraction &other) const
     {
-        int a = getNumerator();
-        int b = getDenominator();
-        int c = other.getNumerator();
-        int d = other.getDenominator();
-        if (c == 0)
+        if (other.getNumerator() == 0)
         {
-            throw invalid_argument("Dividing by zero!");
+            throw runtime_error("Divison by zero!");
         }
-        if (checkOverflow(a, d, a * d) || checkOverflow(b, c, b * c))
+        float first = float(getNumerator()) / (getDenominator());
+        float second = float(other.getNumerator()) / (other.getDenominator());
+        float result = first / second;
+        // check overflow for the Fractions
+        if (result < static_cast<float>(INT_MIN) || result > static_cast<float>(INT_MAX) || first < static_cast<float>(INT_MIN) || first > static_cast<float>(INT_MAX) || second < static_cast<float>(INT_MIN) || second > static_cast<float>(INT_MAX))
         {
-            throw overflow_error("Overflow error in '/' operator");
+            throw overflow_error("Overflow in '/' operator");
         }
-        int gcd1 = __gcd(a, c);
-        int gcd2 = __gcd(d, b);
-        return Fraction((a / gcd1) * (d / gcd2), (b / gcd2) * (c / gcd1));
-
-        // if (other.getDenominator() == 0)
-        // {
-        //     throw invalid_argument("Divison by zero!");
-        // }
-        // int new_top = getNumerator() * other.getDenominator();
-        // int new_bottom = getDenominator() * other.getNumerator();
-        // return Fraction(new_top, new_bottom);
+        int new_top = (getNumerator() * other.getDenominator());
+        int new_bot = (getDenominator() * other.getNumerator());
+        // check overflow for the result
+        if (new_top < numeric_limits<int>::min() || new_top > numeric_limits<int>::max() ||
+            new_bot < numeric_limits<int>::min() || new_bot > numeric_limits<int>::max())
+        {
+            throw overflow_error("Overflow in '/' operator");
+        }
+        Fraction temp(other.getDenominator(), other.getNumerator());
+        return *this * temp;
     }
 
     Fraction Fraction::operator*(const Fraction &other) const
@@ -186,52 +210,34 @@ namespace ariel
             throw overflow_error("Overflow in '*' operator (Denominator)");
         }
         return result;
-
-        // int a = getNumerator();
-        // int b = getDenominator();
-        // int c = other.getNumerator();
-        // int d = other.getDenominator();
-        // if (checkOverflow(a, c, a * c) || checkOverflow(b, d, b * d))
-        // {
-        //     throw overflow_error("Overflow error in '*' operator");
-        // }
-
-        // return Fraction(a * c, b * d);
-
-        // int new_top = getNumerator() * other.getNumerator();
-        // int new_bottom = getDenominator() * other.getDenominator();
-        // return Fraction(new_top, new_bottom);
     }
 
     Fraction operator+(float number, const Fraction &other)
     {
         Fraction to_frac(number);
         return Fraction(to_frac + other);
-
-        // float result = number + static_cast<float>(other.getNumerator()) / other.getDenominator();
-        // return Fraction(result);
     }
 
     Fraction operator-(float number, const Fraction &other)
     {
-        float result = number - static_cast<float>(other.getNumerator()) / other.getDenominator();
-        return Fraction(result);
+        Fraction to_frac(number);
+        return Fraction(to_frac - other);
     }
 
     Fraction operator/(float number, const Fraction &other)
     {
         if (other.getNumerator() == 0)
         {
-            throw invalid_argument("Divison by zero!");
+            throw runtime_error("Divison by zero!");
         }
-        float result = number / (static_cast<float>(other.getNumerator()) / other.getDenominator());
-        return Fraction(result);
+        Fraction to_frac(number);
+        return Fraction(to_frac / other);
     }
 
     Fraction operator*(float number, const Fraction &other)
     {
-        float result = number * static_cast<float>(other.getNumerator()) / other.getDenominator();
-        return Fraction(result);
+        Fraction to_frac(number);
+        return Fraction(to_frac * other);
     }
 
     Fraction operator+(const Fraction &other, float number)
@@ -250,7 +256,7 @@ namespace ariel
     {
         if (number == 0 || other.getDenominator() == 0)
         {
-            throw invalid_argument("Divison by zero!");
+            throw runtime_error("Divison by zero!");
         }
         Fraction to_frac(number);
         return Fraction(other / to_frac);
@@ -258,8 +264,8 @@ namespace ariel
 
     Fraction operator*(const Fraction &other, float number)
     {
-        float result = static_cast<float>(other.getNumerator()) / other.getDenominator() * number;
-        return Fraction(result);
+        Fraction to_frac(number);
+        return Fraction(other * to_frac);
     }
 
     bool Fraction::operator<(const Fraction &other) const
@@ -327,12 +333,24 @@ namespace ariel
         return left.getNumerator() * right.getDenominator() == right.getNumerator() * left.getDenominator();
     }
 
+    /**
+     * Wanted to call the simplify function but had trouble with it so here is a duplicate code for the simplify
+     */
     std::ostream &operator<<(std::ostream &output, const Fraction &other)
     {
-        output << other.getNumerator() << "/" << other.getDenominator();
+        int sign = -1;
+        if ((other.getDenominator() < 0 && other.getNumerator() < 0) || other.getDenominator() < 0 && other.getNumerator() > 0)
+        {
+            output << sign * other.getNumerator() << "/" << sign * other.getDenominator();
+        }
+        else
+        {
+            output << other.getNumerator() << "/" << other.getDenominator();
+        }
         return output;
     }
 
+    // The hardest part of the assigment was to understand how to work with istream input
     std::istream &operator>>(std::istream &input, Fraction &other)
     {
         int first, second, seperator;
@@ -373,61 +391,21 @@ namespace ariel
         return input;
     }
 
-    /**
-     * @brief function to check overflow
-     * @return true if there is overflow, false otherwise
-     */
-    bool Fraction::checkOverflow(int a, int b, int c) const
-    {
-        // no overflow when top or bottom is zero
-        if (a == 0 || b == 0)
-        {
-            return false;
-        }
-        // overflow when the result is INT_MAX or INT_MIN
-        if (c == numeric_limits<int>::max() || c == numeric_limits<int>::min())
-        {
-            return true;
-        }
-
-        // overflow in case of '*' operator
-        if (a != c / b)
-        {
-            return true;
-        }
-
-        // overflow in case of '/' operator
-        if (b != c / a)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    int Fraction::lcm(int a, int b) const
-    {
-        return abs(a * b) / __gcd(a, b);
-    }
-
     void Fraction::simplify()
     {
-        if (getDenominator() < 0)
-        {
-            setNumerator(-getNumerator());
-            setDenominator(-getDenominator());
-        }
-
         int gcd = abs(__gcd(getNumerator(), getDenominator()));
-        // int gcd = __gcd(abs(getNumerator()), getDenominator());
-        setNumerator(getNumerator() / gcd);
-        setDenominator(getDenominator() / gcd);
-    }
-
-    int Fraction::roundFraction(double value, int precision)
-    {
-        double factor = pow(10.0, precision);
-        return static_cast<int>(round(value * factor)) / factor;
+        // checking if the fraction is (-a/-b) or (a/-b)
+        // and updating so the test would pass
+        if ((getDenominator() < 0 && getNumerator() < 0) || (getDenominator() < 0 && getNumerator() > 0))
+        {
+            setNumerator((-getNumerator()) / gcd);
+            setDenominator((-getDenominator()) / gcd);
+        }
+        else
+        {
+            setNumerator(getNumerator() / gcd);
+            setDenominator(getDenominator() / gcd);
+        }
     }
 
 }
