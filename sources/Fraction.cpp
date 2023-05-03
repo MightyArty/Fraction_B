@@ -39,7 +39,7 @@ namespace ariel
         setNumerator(new_top);
         if (new_bottom == 0)
         {
-            throw runtime_error("Divide by zero!");
+            throw runtime_error("Dividing by zero!");
         }
         setDenominator(new_bottom);
     }
@@ -122,9 +122,12 @@ namespace ariel
         {
             throw overflow_error("Overflow in '+' operator");
         }
-        int gcd = __gcd(new_top, new_bot);
-        Fraction temp(new_top / gcd, new_bot / gcd);
+        Fraction temp(new_top, new_bot);
+        temp.simplify();
         return temp;
+        // int gcd = __gcd(new_top, new_bot);
+        // Fraction temp(new_top / gcd, new_bot / gcd);
+        // return temp;
     }
 
     Fraction Fraction::operator-(const Fraction &other) const
@@ -147,22 +150,12 @@ namespace ariel
         {
             throw overflow_error("Overflow in '+' operator");
         }
-        int gcd = __gcd(new_top, new_bot);
-        Fraction temp(new_top / gcd, new_bot / gcd);
+        Fraction temp(new_top, new_bot);
+        temp.simplify();
         return temp;
-
-        // int mul1 = getNumerator() * other.getDenominator();
-        // int mul2 = getDenominator() * other.getNumerator();
-        // int new_top = mul1 - mul2;
-        // int new_bot = getDenominator() * other.getDenominator();
-        // // check if overflow exist
-        // if (mul1 > 0 && mul2 < 0 && (max(mul1, mul2) >= new_top))
-        // {
-        //     throw overflow_error("Overflow in '-' operator");
-        // }
-        // Fraction result(new_top, new_bot);
-        // result.simplify();
-        // return result;
+        // int gcd = __gcd(new_top, new_bot);
+        // Fraction temp(new_top / gcd, new_bot / gcd);
+        // return temp;
     }
 
     Fraction Fraction::operator/(const Fraction &other) const
@@ -203,7 +196,6 @@ namespace ariel
         {
             throw overflow_error("Overflow in '*' operator (Numerator)");
         }
-
         // check overflow for the Denominator
         if (getDenominator() > 1 && other.getDenominator() > 1 && (getDenominator() >= new_bot || other.getDenominator() >= new_bot))
         {
