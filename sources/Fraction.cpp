@@ -15,8 +15,8 @@ namespace ariel
 {
     /**
      * @brief main constructor
-     * @param top the upper number of the fraction
-     * @param bottom the bottom number of the fraction
+     * @param top the Numerator of the fraction
+     * @param bottom the Denominator of the fraction
      */
     Fraction::Fraction(int top, int bottom)
     {
@@ -30,6 +30,11 @@ namespace ariel
         simplify();
     }
 
+    /**
+     * @brief constructor that exepting float
+     * @param number the given number that would represent as Fraction
+     * @return new fraction
+     */
     Fraction::Fraction(float number)
     {
         int temp = number * GREAT;
@@ -44,6 +49,9 @@ namespace ariel
         setDenominator(new_bottom);
     }
 
+    /**
+     * @brief Default constructor
+     */
     Fraction::Fraction()
     {
         setNumerator(0);
@@ -102,6 +110,10 @@ namespace ariel
         return old;
     }
 
+    /**
+     * @brief Adds two Fraction objects
+     * @return new Fraction object
+     */
     Fraction Fraction::operator+(const Fraction &other) const
     {
         float first = float(getNumerator()) / (getDenominator());
@@ -125,11 +137,12 @@ namespace ariel
         Fraction temp(new_top, new_bot);
         temp.simplify();
         return temp;
-        // int gcd = __gcd(new_top, new_bot);
-        // Fraction temp(new_top / gcd, new_bot / gcd);
-        // return temp;
     }
 
+    /**
+     * @brief Subtructs two Fraction objects
+     * @return new Fraction object
+     */
     Fraction Fraction::operator-(const Fraction &other) const
     {
         float first = float(getNumerator()) / (getDenominator());
@@ -153,11 +166,12 @@ namespace ariel
         Fraction temp(new_top, new_bot);
         temp.simplify();
         return temp;
-        // int gcd = __gcd(new_top, new_bot);
-        // Fraction temp(new_top / gcd, new_bot / gcd);
-        // return temp;
     }
 
+    /**
+     * @brief Divides two Fraction objects
+     * @return new Fraction object
+     */
     Fraction Fraction::operator/(const Fraction &other) const
     {
         if (other.getNumerator() == 0)
@@ -184,6 +198,10 @@ namespace ariel
         return *this * temp;
     }
 
+    /**
+     * @brief Multiply two Fraction objects
+     * @return new Fraction object
+     */
     Fraction Fraction::operator*(const Fraction &other) const
     {
         int new_top = getNumerator() * other.getNumerator();
@@ -204,18 +222,30 @@ namespace ariel
         return result;
     }
 
+    /**
+     * @brief Adds float with Fraction
+     * @return new Fraction object
+     */
     Fraction operator+(float number, const Fraction &other)
     {
         Fraction to_frac(number);
         return Fraction(to_frac + other);
     }
 
+    /**
+     * @brief Subtructs float with Fraction
+     * @return new Fraction object
+     */
     Fraction operator-(float number, const Fraction &other)
     {
         Fraction to_frac(number);
         return Fraction(to_frac - other);
     }
 
+    /**
+     * @brief Divides float with Fraction
+     * @return new Fraction object
+     */
     Fraction operator/(float number, const Fraction &other)
     {
         if (other.getNumerator() == 0)
@@ -226,24 +256,40 @@ namespace ariel
         return Fraction(to_frac / other);
     }
 
+    /**
+     * @brief Multiply float with Fraction
+     * @return new Fraction object
+     */
     Fraction operator*(float number, const Fraction &other)
     {
         Fraction to_frac(number);
         return Fraction(to_frac * other);
     }
 
+    /**
+     * @brief Adds Fraction with float
+     * @return new Fraction object
+     */
     Fraction operator+(const Fraction &other, float number)
     {
         Fraction to_frac(number);
         return Fraction(other + to_frac);
     }
 
+    /**
+     * @brief Subtructs Fraction with float
+     * @return new Fraction object
+     */
     Fraction operator-(const Fraction &other, float number)
     {
         Fraction to_frac(number);
         return Fraction(other - to_frac);
     }
 
+    /**
+     * @brief Divides Fraction with float
+     * @return new Fraction object
+     */
     Fraction operator/(const Fraction &other, float number)
     {
         if (number == 0 || other.getDenominator() == 0)
@@ -254,6 +300,10 @@ namespace ariel
         return Fraction(other / to_frac);
     }
 
+    /**
+     * @brief Multiply Fraction with float
+     * @return new Fraction object
+     */
     Fraction operator*(const Fraction &other, float number)
     {
         Fraction to_frac(number);
@@ -320,13 +370,20 @@ namespace ariel
         return other.getNumerator() >= (number * other.getDenominator());
     }
 
+    /**
+     * @brief Cheks if one Fraction is equal to another Fraction
+     * @param left the first Fraction to compare
+     * @param right the second Fraction to compare
+     * @return true if so, otherwise false
+     */
     bool operator==(const Fraction &left, const Fraction &right)
     {
         return left.getNumerator() * right.getDenominator() == right.getNumerator() * left.getDenominator();
     }
 
     /**
-     * Wanted to call the simplify function but had trouble with it so here is a duplicate code for the simplify
+     * @brief Output the Fraction as (a / b)
+     * @brief while checking if the denominator is negative, if so -> making the numenator negative instead
      */
     std::ostream &operator<<(std::ostream &output, const Fraction &other)
     {
@@ -342,7 +399,9 @@ namespace ariel
         return output;
     }
 
-    // The hardest part of the assigment was to understand how to work with istream input
+    /**
+     * @brief Reading from the stream and checking if the given Fraction from the user is in the right format
+     */
     std::istream &operator>>(std::istream &input, Fraction &other)
     {
         int first, second, seperator;
@@ -383,6 +442,10 @@ namespace ariel
         return input;
     }
 
+    /**
+     * @brief Function to simplify the Fraction using the gcd algorithm from <algorithm> library
+     * @brief while checking if the denominator is negative
+     */
     void Fraction::simplify()
     {
         int gcd = abs(__gcd(getNumerator(), getDenominator()));
